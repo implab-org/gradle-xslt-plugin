@@ -29,7 +29,10 @@ import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.implab.gradle.xslt.internal.DomBuilderEx;
 import org.implab.gradle.xslt.internal.DomSupport;
 import org.implab.gradle.xslt.internal.TransformerParameterVisitor;
@@ -42,6 +45,7 @@ import groovy.lang.Closure;
  * The task for applying an XSLT transformation. This task applies a single
  * transformation to a single document and produces a single result.
  */
+@DisableCachingByDefault(because = "XSLT transformations may resolve external resources not declared as task inputs.")
 public abstract class XsltTask extends DefaultTask {
 
     private transient final DomBuilderEx dom;
@@ -67,6 +71,7 @@ public abstract class XsltTask extends DefaultTask {
     }
 
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract RegularFileProperty getStylesheet();
 
     private File getStylesheetFile() {
@@ -74,6 +79,7 @@ public abstract class XsltTask extends DefaultTask {
     }
 
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract RegularFileProperty getSource();
 
     private File getSourceFile() {
@@ -82,6 +88,7 @@ public abstract class XsltTask extends DefaultTask {
 
     @InputFiles
     @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getIncludes();
 
     @OutputFile

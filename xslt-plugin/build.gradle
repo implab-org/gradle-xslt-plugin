@@ -1,6 +1,9 @@
 plugins {
     id "java-gradle-plugin"
+    alias libs.plugins.gradle.plugin.publish
 }
+
+description = "Gradle plugin for wrapping XSLT transformations as input-tracked tasks."
 
 dependencies {
     implementation  libs.xalan
@@ -17,11 +20,50 @@ java {
     sourceCompatibility = 17
 }
 
+def pluginWebsite = providers.gradleProperty("pluginWebsite")
+def pluginVcsUrl = providers.gradleProperty("pluginVcsUrl")
+def pluginScmConnection = providers.gradleProperty("pluginScmConnection")
+def pluginScmDeveloperConnection = providers.gradleProperty("pluginScmDeveloperConnection")
+
 gradlePlugin {
-	plugins {
+    website.set(pluginWebsite)
+    vcsUrl.set(pluginVcsUrl)
+
+    plugins {
         xslt {
             id = 'org.implab.gradle-xslt'
             implementationClass = 'org.implab.gradle.xslt.XsltPlugin'
+            displayName = 'Gradle XSLT Plugin'
+            description = project.description
+            tags.set(['xslt', 'xml', 'code-generation', 'generator'])
+            compatibility(it) {
+                features {
+                    configurationCache = true
+                }
+            }
+        }
+    }
+}
+
+publishing {
+    publications.withType(org.gradle.api.publish.maven.MavenPublication).configureEach {
+        pom {
+            name = 'Gradle XSLT Plugin'
+            description = project.description
+            url = pluginWebsite.get()
+
+            scm {
+                url = pluginVcsUrl.get()
+                connection = pluginScmConnection.get()
+                developerConnection = pluginScmDeveloperConnection.get()
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'staging'
+            url = layout.buildDirectory.dir('repo')
         }
     }
 }

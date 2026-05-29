@@ -5,7 +5,7 @@ to one principal XML document.
 
 ```groovy
 plugins {
-    id "org.implab.gradle-xslt"
+    id "org.implab.gradle-xslt" version "0.1.0"
 }
 
 tasks.register("transform", XsltTask) {
@@ -64,6 +64,25 @@ Simple parameter values are passed through to `Transformer#setParameter` as-is.
 Use stable, serializable scalar values when relying on Gradle input snapshots or
 configuration cache. XML node values created with `nodeSet` and `fragment` are
 converted to an internal serializable representation.
+
+`XsltTask` is configuration-cache compatible and supports Gradle up-to-date
+checks, but it is not build-cacheable by default. Stylesheets can resolve
+external resources that are invisible to Gradle unless they are explicitly
+declared as inputs.
+
+Build cache can be enabled for concrete task instances when all external XSLT
+inputs are declared:
+
+```groovy
+tasks.withType(XsltTask).configureEach {
+    outputs.cacheIf("all external XSLT inputs are declared") {
+        true
+    }
+}
+```
+
+Use `includes` for stylesheet dependencies and any other files that affect the
+result but are not visible through the main `source` and `stylesheet` inputs.
 
 For Java or Kotlin oriented configuration, `parameters(Action<? super
 Map<String, Object>>)` accepts values through a temporary map and converts them
@@ -137,6 +156,34 @@ tasks.register("generateJavaModel", XsltTask) {
 
 This lets Gradle infer task dependencies from the `Provider<RegularFile>`
 connection without manual `dependsOn`.
+
+## Publishing
+
+Publication coordinates and plugin portal metadata are configured in
+`gradle.properties` and `xslt-plugin/build.gradle`.
+
+Local Maven publication smoke test:
+
+```sh
+./gradlew :xslt-plugin:publishAllPublicationsToStagingRepository
+```
+
+Gradle Plugin Portal validation without uploading:
+
+```sh
+./gradlew :xslt-plugin:publishPlugins --validate-only
+```
+
+Actual Plugin Portal publication:
+
+```sh
+./gradlew :xslt-plugin:publishPlugins
+```
+
+Plugin Portal credentials should stay outside the repository. Use
+`GRADLE_PUBLISH_KEY` and `GRADLE_PUBLISH_SECRET`, or put
+`gradle.publish.key` and `gradle.publish.secret` into
+`~/.gradle/gradle.properties`.
 
 ## Notes
 

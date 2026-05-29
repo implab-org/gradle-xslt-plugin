@@ -1,4 +1,5 @@
 [versions]
+gradlePluginPublish = "2.1.1"
 xalan = "2.7.2"
 junit = "4.13.2"
 
@@ -6,3 +7,7 @@ junit = "4.13.2"
 
 xalan = { module = "xalan:xalan", version.ref = "xalan" }
 junit = { module = "junit:junit", version.ref = "junit" }
+
+[plugins]
+
+gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradlePluginPublish" }
