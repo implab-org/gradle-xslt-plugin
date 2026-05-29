@@ -1,0 +1,17 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+// To declare projects as part of a multi-project build use the 'include' method
+
+rootProject.name = 'gradle-xslt'
+include 'xslt-plugin'

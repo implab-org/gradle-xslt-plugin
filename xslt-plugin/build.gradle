@@ -1,0 +1,33 @@
+plugins {
+    id "java-gradle-plugin"
+}
+
+dependencies {
+    implementation  libs.xalan
+
+    testImplementation gradleTestKit()
+    testImplementation libs.junit
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+
+    targetCompatibility = 17
+    sourceCompatibility = 17
+}
+
+gradlePlugin {
+	plugins {
+        xslt {
+            id = 'org.implab.gradle-xslt'
+            implementationClass = 'org.implab.gradle.xslt.XsltPlugin'
+        }
+    }
+}
+
+task printVersion {
+	doLast {
+		println "$project.version"
+	}
+}
