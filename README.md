@@ -165,7 +165,39 @@ Publication coordinates and plugin portal metadata are configured in
 Local Maven publication smoke test:
 
 ```sh
-./gradlew :xslt-plugin:publishAllPublicationsToStagingRepository
+./gradlew :xslt-plugin:publishAllPublicationsToLocalStagingRepository
+```
+
+For local development in other builds, publish the plugin marker and plugin
+artifact to the home Maven repository:
+
+```sh
+./gradlew -Pversion=0.1.1-SNAPSHOT :xslt-plugin:publishAllPublicationsToHomeRepository
+```
+
+By default, the home repository is `$HOME/.gradle/repositories/implab`. Override
+it with `-PhomeRepositoryPath=/path/to/repository` or put `homeRepositoryPath`
+into `~/.gradle/gradle.properties`.
+
+Use the repository first in the consuming build while testing local changes:
+
+```groovy
+pluginManagement {
+    repositories {
+        maven {
+            url = uri("${System.properties["user.home"]}/.gradle/repositories/implab")
+        }
+        gradlePluginPortal()
+    }
+}
+```
+
+Then switch the plugin version to the local one:
+
+```groovy
+plugins {
+    id "org.implab.gradle-xslt" version "0.1.1-SNAPSHOT"
+}
 ```
 
 Gradle Plugin Portal validation without uploading:

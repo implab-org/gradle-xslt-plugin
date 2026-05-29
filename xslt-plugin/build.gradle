@@ -24,6 +24,8 @@ def pluginWebsite = providers.gradleProperty("pluginWebsite")
 def pluginVcsUrl = providers.gradleProperty("pluginVcsUrl")
 def pluginScmConnection = providers.gradleProperty("pluginScmConnection")
 def pluginScmDeveloperConnection = providers.gradleProperty("pluginScmDeveloperConnection")
+def homeRepositoryPath = providers.gradleProperty("homeRepositoryPath")
+        .orElse(providers.systemProperty("user.home").map { "${it}/.gradle/repositories/implab" })
 
 gradlePlugin {
     website.set(pluginWebsite)
@@ -62,8 +64,12 @@ publishing {
 
     repositories {
         maven {
-            name = 'staging'
+            name = 'localStaging'
             url = layout.buildDirectory.dir('repo')
+        }
+        maven {
+            name = 'home'
+            url = uri(homeRepositoryPath.get())
         }
     }
 }
